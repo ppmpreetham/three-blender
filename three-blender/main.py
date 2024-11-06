@@ -18,9 +18,9 @@ def addobjprop(object):
 cam_code = ""
 
 for camera in bpy.data.cameras:
-    print("\n")    
     cam_code += f"const {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += addobjprop(camera)
+    cam_code += "\n"
 
 print(cam_code)
 
@@ -31,16 +31,14 @@ light_code = ""
 for light in bpy.data.lights:
 
     if light.type == "POINT":
-        print("\n")
         light_code += f"const {light.name} = new THREE.PointLight({bpy_color_to_hex(light.color)});\n"
 
     elif light.type == "SPOT":
-        print("\n")
         spot_size = bpy.data.objects[light.name].data.spot_size
 
         light_code += f"const {light.name} = new THREE.SpotLight({bpy_color_to_hex(light.color)}, {light.energy}, {light.cutoff_distance}, {spot_size}, 0, 1);\n"
     
     light_code += addobjprop(light)
-    light_code += f"scene.add({light.name});\n"
+    light_code += f"scene.add({light.name});\n\n"
 
 print(light_code)

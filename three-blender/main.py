@@ -14,21 +14,20 @@ for i in bpy.data.cameras:
     cam_loc = bpy.data.objects[i.name].location
     cam_rot = bpy.data.objects[i.name].rotation_euler
    
-    print("CAMERA NAME: ", i.name)
-    print("CAMERA LOCATION: ", cam_loc)
-    print("CAMERA ROTATION: ", cam_rot)
-    print("CAMERA TYPE: ", i.type)
-    print("CAMERA LENS: ", i.lens)
-    print("CAMERA SENSOR WIDTH: ", i.sensor_width)
-    print("CAMERA SENSOR HEIGHT: ", i.sensor_height)
-    print("CAMERA SENSOR FIT: ", i.sensor_fit)
+    # print("CAMERA NAME: ", i.name)
+    # print("CAMERA LOCATION: ", cam_loc)
+    # print("CAMERA ROTATION: ", cam_rot)
+    # print("CAMERA TYPE: ", i.type)
+    # print("CAMERA LENS: ", i.lens)
+    # print("CAMERA SENSOR WIDTH: ", i.sensor_width)
+    # print("CAMERA SENSOR HEIGHT: ", i.sensor_height)
+    # print("CAMERA SENSOR FIT: ", i.sensor_fit)
 
     cam_code += f"const {i.name} = new THREE.PerspectiveCamera({i.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += f"{i.name}.position.set({cam_loc.x}, {cam_loc.y}, {cam_loc.z});\n"
     cam_code += f"{i.name}.rotation.set({cam_rot.x}, {cam_rot.y}, {cam_rot.z});\n"
 
-    print("\n")
-    print(cam_code)
+print(cam_code)
 
 # LIGHTS
 
@@ -36,15 +35,22 @@ light_code = ""
 
 for i in bpy.data.lights:
 
-    print("\n")
 
     light_loc = bpy.data.objects[i.name].location
     light_rot = bpy.data.objects[i.name].rotation_euler
 
-    print("LIGHT NAME: ", i.name)
-    print("LIGHT LOCATION: ", light_loc)
-    print("LIGHT ROTATION: ", light_rot)
-    print("LIGHT TYPE: ", i.type)
-    print("LIGHT COLOR: ", i.color)
-    print("LIGHT ENERGY: ", i.energy)
-    print("LIGHT POWER: ", i.power)
+    # print("LIGHT NAME: ", i.name)
+    # print("LIGHT LOCATION: ", light_loc)
+    # print("LIGHT ROTATION: ", light_rot)
+    # print("LIGHT TYPE: ", i.type)
+    # print("LIGHT COLOR: ", i.color)
+
+    light_code += f"const {i.name} = new THREE.{i.type}Light({i.color});\n"
+
+    if i.type == "Point":
+        light_code += f"{i.name}.position.set({light_loc.x}, {light_loc.y}, {light_loc.z});\n"
+    elif i.type == "Spot":
+        light_code += f"{i.name}.position.set({light_loc.x}, {light_loc.y}, {light_loc.z});\n"
+        light_code += f"{i.name}.rotation.set({light_rot.x}, {light_rot.y}, {light_rot.z});\n"
+
+print(light_code)

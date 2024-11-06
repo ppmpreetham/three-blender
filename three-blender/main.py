@@ -38,7 +38,10 @@ for light in bpy.data.lights:
 
         light_code += f"const {light.name} = new THREE.SpotLight({bpy_color_to_hex(light.color)}, {light.energy}, {light.cutoff_distance}, {spot_size}, 0, 1);\n"
     
-    light_code += addobjprop(light)
+    # light position
+    location = bpy.data.objects[light.name].location
+    light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"
+
     light_code += f"scene.add({light.name});\n\n"
 
 print(light_code)

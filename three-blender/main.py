@@ -9,7 +9,7 @@ def addobjprop(object):
     rotation = bpy.data.objects[object.name].rotation_euler
 
     code = f"{object.name}.position.set({location.x}, {location.y}, {location.z});\n"
-    code += f"{object.name}.position.set({rotation.x}, {rotation.y}, {rotation.z});\n"
+    code += f"{object.name}.rotation.set({rotation.x}, {rotation.y}, {rotation.z});\n"
 
     return code
 

@@ -20,7 +20,7 @@ cam_code = ""
 for camera in bpy.data.cameras:
     print("\n")    
     cam_code += f"const {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
-    cam_code +=addobjprop(camera)
+    cam_code += addobjprop(camera)
 
 print(cam_code)
 
@@ -28,30 +28,19 @@ print(cam_code)
 
 light_code = ""
 
-for i in bpy.data.lights:
+for light in bpy.data.lights:
 
-
-    light_loc = bpy.data.objects[i.name].location
-    light_rot = bpy.data.objects[i.name].rotation_euler
-
-    print("LIGHT NAME: ", i.name)
-    # print("LIGHT LOCATION: ", light_loc)
-    # print("LIGHT ROTATION: ", light_rot)
-    print("LIGHT TYPE: ", i.type)
-    # print("LIGHT COLOR: ", i.color)
-
-
-    if i.type == "POINT":
+    if light.type == "POINT":
         print("\n")
-        light_code += f"const {i.name} = new THREE.{i.type}Light({bpy_color_to_hex(i.color)});\n"
-        light_code += f"{i.name}.position.set({light_loc.x}, {light_loc.y}, {light_loc.z});\n"
+        light_code += f"const {light.name} = new THREE.PointLight({bpy_color_to_hex(light.color)});\n"
 
-    elif i.type == "SPOT":
+    elif light.type == "SPOT":
         print("\n")
-        spot_size = bpy.data.objects[i.name].data.spot_size
+        spot_size = bpy.data.objects[light.name].data.spot_size
 
-        light_code += f"const {i.name} = new THREE.{i.type}Light({bpy_color_to_hex(i.color)}, {i.energy}, {i.cutoff_distance}, {spot_size}, );\n"
-        light_code += f"{i.name}.position.set({light_loc.x}, {light_loc.y}, {light_loc.z});\n"
-        light_code += f"{i.name}.rotation.set({light_rot.x}, {light_rot.y}, {light_rot.z});\n"
+        light_code += f"const {light.name} = new THREE.SpotLight({bpy_color_to_hex(light.color)}, {light.energy}, {light.cutoff_distance}, {spot_size}, 0, 1);\n"
+    
+    light_code += addobjprop(light)
+    light_code += f"scene.add({light.name});\n"
 
 print(light_code)

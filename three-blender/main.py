@@ -2,7 +2,7 @@ import bpy
 
 def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)
-    return '#{:02x}{:02x}{:02x}'.format(*rgb)
+    return '0x{:02x}{:02x}{:02x}'.format(*rgb)
 
 def addobjprop(object):
     location = bpy.data.objects[object.name].location

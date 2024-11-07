@@ -29,6 +29,8 @@ for light in bpy.data.lights:
     # POINT LIGHT
     if light.type == "POINT":
         light_code += f"const {light.name} = new THREE.PointLight({bpy_color_to_hex(light.color)});\n"
+        location = bpy.data.objects[light.name].location
+        light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"
 
     # SPOT LIGHT
     elif light.type == "SPOT":

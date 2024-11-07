@@ -22,9 +22,9 @@ def addobjprop(object):
     return code
 
 # CAMERAS
-cam_code = "// CAMERAS\n"
+cam_code = "\n// CAMERAS"
 for camera in bpy.data.cameras:
-    cam_code += f"\nconst {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
+    cam_code += f"const {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += addobjprop(bpy.data.objects[camera.name])
     cam_code += "\n"
 
@@ -127,7 +127,7 @@ renderer_code += f"scene.background = new THREE.Color({bpy_color_to_hex(backgrou
 # Animation loop
 renderer_code += "\nfunction animate() {\n"
 renderer_code += "\trequestAnimationFrame(animate);\n"
-renderer_code += "\trenderer.render(scene, {bpy.data.cameras[0].name});\n"
+renderer_code += f"\trenderer.render(scene, {bpy.data.cameras[0].name});\n"
 renderer_code += "}\n"
 renderer_code += "animate();\n"
 

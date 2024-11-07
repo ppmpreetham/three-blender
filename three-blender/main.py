@@ -1,5 +1,9 @@
 import bpy
 from mathutils import Vector
+from os import makedirs, path
+
+blend_dir = bpy.path.abspath("//")
+export_dir = path.join(blend_dir, "exported_gltfs")
 
 imports = "import * as THREE from 'three';"
 
@@ -84,12 +88,22 @@ def loader(path, object):
     load_code += "\t\t\tconsole.error('An error happened loading the model {object.name}', error);\n"
     load_code += "\t\t}\n"
     load_code += ");\n"
-    return
+    return load_code
+
+def export_obj(obj):
+    bpy.ops.object.select_all(action='DESELECT')
+
+    if obj.type == "MESH":
+        obj.select_set(True)
+        export_path = path.join(export_dir, f"{obj.name}.gltf")
+        bpy.ops.export_scene.gltf(filepath=export_path, use_selection=True)
+
 
 # Check if GLTFLoader is needed
 if bpy.data.objects:
     imports += "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';"
     obj_code += "const loader = new GLTFLoader();\n"
+    makedirs(export_dir, exist_ok=True) # Create directory if it doesn't exist
 
 for obj in bpy.data.objects:
     if obj.type == "MESH":

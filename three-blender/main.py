@@ -22,15 +22,13 @@ def addobjprop(object):
     return code
 
 # CAMERAS
-cam_code = ""
+cam_code = "// CAMERAS\n"
 for camera in bpy.data.cameras:
-    cam_code += f"const {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
+    cam_code += f"\nconst {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += addobjprop(bpy.data.objects[camera.name])
-    cam_code += "\n"
-
 
 # LIGHTS
-light_code = ""
+light_code = "// LIGHTS\n"
 for light in bpy.data.lights:
     # POINT LIGHT
     if light.type == "POINT":
@@ -68,7 +66,7 @@ for light in bpy.data.lights:
 
 
 # OBJECTS
-obj_code = ""
+obj_code = "// OBJECTS\n"
 
 def loader(filepath, object):
     location = bpy.data.objects[object.name].location
@@ -115,7 +113,8 @@ for obj in bpy.data.objects:
 
 
 # RENDERER
-renderer_code = "const renderer = new THREE.WebGLRenderer();\n"
+renderer_code = "// RENDERER\n"
+renderer_code += "const renderer = new THREE.WebGLRenderer();\n"
 renderer_code += "renderer.setSize(window.innerWidth, window.innerHeight);\n"
 renderer_code += "document.body.appendChild(renderer.domElement);\n"
 
@@ -130,3 +129,13 @@ print(cam_code)
 print(light_code)
 print(obj_code)
 print(renderer_code)
+
+# Save the code to a file
+with open(path.join(blend_dir, "three.js"), "w") as file:
+    file.write(imports)
+    file.write("const scene = new THREE.Scene();\n")
+    file.write(cam_code)
+    file.write(light_code)
+    file.write(obj_code)
+    file.write(renderer_code)
+    file.close()

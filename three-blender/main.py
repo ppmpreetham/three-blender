@@ -1,4 +1,5 @@
 import bpy
+from mathutils import Vector
 
 def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)
@@ -37,7 +38,22 @@ for light in bpy.data.lights:
         spot_size = bpy.data.objects[light.name].data.spot_size
 
         light_code += f"const {light.name} = new THREE.SpotLight({bpy_color_to_hex(light.color)}, {light.energy}, {light.cutoff_distance}, {spot_size}, 0, 1);\n"
-    
+        light_code += f"{light.name}.castShadow = true; // enable shadow\n"
+
+        location = bpy.data.objects[light.name].location
+        # If there's a target constraint, use that; otherwise, calculate a default target location
+        if light.constraints:
+            for constraint in light.constraints:
+                if constraint.type in {'TRACK_TO', 'DAMPED_TRACK', 'LOCKED_TRACK'} and constraint.target:
+                    target_location = constraint.target.location
+                    break
+        else:
+            target_location = location + light.rotation_euler.to_matrix() @ Vector((0, 0, -1))
+        light_code += f"{light.name}.target.position.set({target_location.x}, {target_location.y}, {target_location.z});\n"
+
+    elif light.type == "AREA":
+        light_code += f"const {light.name} = new THREE.DirectionalLight({bpy_color_to_hex(light.color)}, {light.energy});\n"
+        
     # light position
     location = bpy.data.objects[light.name].location
     light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"

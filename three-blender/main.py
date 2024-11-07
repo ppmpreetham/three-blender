@@ -1,12 +1,14 @@
 import bpy
 from mathutils import Vector
 
-# Function to convert Blender color to HEX (Three.js format)
+imports = "import * as THREE from 'three';"
+
+# Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)
     return '0x{:02x}{:02x}{:02x}'.format(*rgb)
 
-# Function to generate position and rotation properties for objects
+# Generate position and rotation properties for objects
 def addobjprop(object):
     location = bpy.data.objects[object.name].location
     rotation = bpy.data.objects[object.name].rotation_euler
@@ -42,14 +44,14 @@ for light in bpy.data.lights:
         location = light_object.location
         light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"
         
-        # Determine target location based on constraints (if available)
+        # Determining target location based on constraints
         if light_object.constraints:
             for constraint in light_object.constraints:
                 if constraint.type in {'TRACK_TO', 'DAMPED_TRACK', 'LOCKED_TRACK'} and constraint.target:
                     target_location = constraint.target.location
                     break
         else:
-            # If no constraint, calculate the target position
+            # Calculate the target position if no constraint
             target_location = location + light_object.rotation_euler.to_matrix() @ Vector((0, 0, -1))
         
         light_code += f"{light.name}.target.position.set({target_location.x}, {target_location.y}, {target_location.z});\n"
@@ -58,7 +60,39 @@ for light in bpy.data.lights:
     elif light.type == "AREA":
         light_code += f"const {light.name} = new THREE.DirectionalLight({bpy_color_to_hex(light.color)}, {light.energy});\n"
     
-    # Add light to the scene
     light_code += f"scene.add({light.name});\n\n"
 
 print(light_code)
+
+# OBJECTS
+obj_code = ""
+
+def loader(path, object):
+    location = bpy.data.objects[object.name].location
+    rotation = bpy.data.objects[object.name].rotation_euler
+
+    load_code = "loader.load(\t'{path}',\n"
+    load_code += "\t(gltf) => {\n"
+    load_code += f"\t\tconst {object.name} = gltf.scene;\n"
+    load_code += f"\t\t{object}.position.set({location.x}, {location.y}, {location.z});\n"
+    load_code += f"\t\t{object}.rotation.set({rotation.x}, {rotation.y}, {rotation.z});\n"
+    load_code += f"\t\tscene.add({object.name});\n"
+    load_code += "\t\t(xhr) => {\n"
+    load_code += "\t\t\tconsole.log('{object.name} loaded: ' + (xhr.loaded / xhr.total * 100) + '%');\n"
+    load_code += "\t\t},\n"
+    load_code += "\t\t(error) => {\n"
+    load_code += "\t\t\tconsole.error('An error happened loading the model {object.name}', error);\n"
+    load_code += "\t\t}\n"
+    load_code += ");\n"
+    return
+
+# Check if GLTFLoader is needed
+if bpy.data.objects:
+    imports += "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';"
+    obj_code += "const loader = new GLTFLoader();\n"
+
+for obj in bpy.data.objects:
+    if obj.type == "MESH":
+        obj_code += f"// {obj.name}\n"
+        obj_code += loader("path/to/model.glb", obj.name) # CHANGE THE PATH HERE
+        

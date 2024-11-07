@@ -126,4 +126,6 @@ renderer_code += "document.body.appendChild(renderer.domElement);\n"
 # Background color
 background_color = bpy.context.scene.world.color
 renderer_code += f"// Background Color\n"
-renderer_code += f"scene.background = new Three.Color({bpy_color_to_hex(background_color)});\n"
+renderer_code += f"scene.background = new THREE.Color({bpy_color_to_hex(background_color)});\n"
+
+print(renderer_code)

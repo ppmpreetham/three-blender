@@ -5,8 +5,9 @@ from os import makedirs, path
 blend_dir = bpy.path.abspath("//")
 export_dir = path.join(blend_dir, "exported_gltfs")
 
-imports = "import * as THREE from 'three';\n"
-
+imports = 'import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";\n'
+imports += 'import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";\n'
+imports += 'import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";\n'
 
 # Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):
@@ -26,6 +27,7 @@ cam_code = "\n// CAMERAS\n"
 for camera in bpy.data.cameras:
     cam_code += f"const {camera.name} = new THREE.PerspectiveCamera({camera.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += addobjprop(bpy.data.objects[camera.name])
+    cam_code += f"scene.add({camera.name});\n"
     cam_code += "\n"
 
 # LIGHTS

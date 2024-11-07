@@ -101,7 +101,6 @@ def export_obj(obj):
 
 # Check if GLTFLoader is needed
 if bpy.data.objects:
-    imports += "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';\n"
     obj_code += "const loader = new GLTFLoader();\n"
     makedirs(export_dir, exist_ok=True)  # Create directory if it doesn't exist
 
@@ -123,6 +122,15 @@ renderer_code += "document.body.appendChild(renderer.domElement);\n"
 background_color = bpy.context.scene.world.color
 renderer_code += f"\n// Background Color\n"
 renderer_code += f"scene.background = new THREE.Color({bpy_color_to_hex(background_color)});\n"
+
+# event listeners
+renderer_code += "\n// Event Listeners\n"
+renderer_code += "window.addEventListener('resize', () => {\n"
+renderer_code += "\trenderer.setSize(window.innerWidth, window.innerHeight);\n"
+renderer_code += f"\t{bpy.data.cameras[0].name}.aspect = window.innerWidth / window.innerHeight;\n"
+renderer_code += f"\t{bpy.data.cameras[0].name}.updateProjectionMatrix();\n"
+renderer_code += "renderer.setSize(window.innerWidth, window.innerHeight);"
+renderer_code += "});\n"
 
 # Animation loop
 renderer_code += "\nfunction animate() {\n"

@@ -73,11 +73,11 @@ print(light_code)
 # OBJECTS
 obj_code = ""
 
-def loader(path, object):
+def loader(filepath, object):
     location = bpy.data.objects[object.name].location
     rotation = bpy.data.objects[object.name].rotation_euler
 
-    load_code = f"loader.load('{path}',\n"
+    load_code = f"loader.load('{filepath}',\n"
     load_code += "\t(gltf) => {\n"
     load_code += f"\t\tconst {object.name} = gltf.scene;\n"
     load_code += f"\t\t{object.name}.position.set({location.x}, {location.y}, {location.z});\n"
@@ -112,7 +112,9 @@ if bpy.data.objects:
 for obj in bpy.data.objects:
     if obj.type == "MESH":
         obj_code += f"\n// {obj.name}\n"
-        obj_code += loader(export_obj(obj), obj) + "\n"
+        filepath = export_obj(obj)
+        if filepath:
+            obj_code += loader(filepath, obj) + "\n"
 
 print(obj_code)
 

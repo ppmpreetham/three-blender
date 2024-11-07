@@ -98,6 +98,8 @@ def export_obj(obj):
         obj.select_set(True)
         export_path = path.join(export_dir, f"{obj.name}.gltf")
         bpy.ops.export_scene.gltf(filepath=export_path, use_selection=True)
+        obj.select_set(False)
+        return export_path
 
 # Check if GLTFLoader is needed
 if bpy.data.objects:
@@ -108,6 +110,6 @@ if bpy.data.objects:
 for obj in bpy.data.objects:
     if obj.type == "MESH":
         obj_code += f"// {obj.name}\n"
-        obj_code += loader("path/to/model.glb", obj)  # CHANGE THE PATH HERE
+        obj_code += loader(export_obj(obj), obj) + "\n"
 
 print(obj_code)

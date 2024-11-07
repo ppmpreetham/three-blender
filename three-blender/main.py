@@ -7,7 +7,6 @@ export_dir = path.join(blend_dir, "exported_gltfs")
 
 imports = "import * as THREE from 'three';\n"
 
-print("const scene = new THREE.Scene();")
 
 # Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):
@@ -29,7 +28,6 @@ for camera in bpy.data.cameras:
     cam_code += addobjprop(bpy.data.objects[camera.name])
     cam_code += "\n"
 
-print(cam_code)
 
 # LIGHTS
 light_code = ""
@@ -68,7 +66,6 @@ for light in bpy.data.lights:
     
     light_code += f"scene.add({light.name});\n\n"
 
-print(light_code)
 
 # OBJECTS
 obj_code = ""
@@ -116,7 +113,6 @@ for obj in bpy.data.objects:
         if filepath:
             obj_code += loader(filepath, obj) + "\n"
 
-print(obj_code)
 
 # RENDERER
 renderer_code = "const renderer = new THREE.WebGLRenderer();\n"
@@ -128,4 +124,9 @@ background_color = bpy.context.scene.world.color
 renderer_code += f"// Background Color\n"
 renderer_code += f"scene.background = new THREE.Color({bpy_color_to_hex(background_color)});\n"
 
+print(imports)
+print("const scene = new THREE.Scene();")
+print(cam_code)
+print(light_code)
+print(obj_code)
 print(renderer_code)

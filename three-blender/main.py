@@ -78,7 +78,7 @@ def loader(filepath, object):
     location = bpy.data.objects[object.name].location
     rotation = bpy.data.objects[object.name].rotation_euler
 
-    load_code = f"loader.load('{f"exported_gltfs/{object.name}.glb")}',\n"
+    load_code = f"loader.load('exported_gltfs/{object.name}.glb',\n"
     load_code += "\t(gltf) => {\n"
     load_code += f"\t\tconst {object.name} = gltf.scene;\n"
     load_code += f"\t\t{object.name}.position.set({location.x}, {location.y}, {location.z});\n"

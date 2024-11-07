@@ -7,6 +7,8 @@ export_dir = path.join(blend_dir, "exported_gltfs")
 
 imports = "import * as THREE from 'three';\n"
 
+print("const scene = new THREE.Scene();")
+
 # Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)
@@ -109,7 +111,17 @@ if bpy.data.objects:
 
 for obj in bpy.data.objects:
     if obj.type == "MESH":
-        obj_code += f"// {obj.name}\n"
+        obj_code += f"\n// {obj.name}\n"
         obj_code += loader(export_obj(obj), obj) + "\n"
 
 print(obj_code)
+
+# RENDERER
+renderer_code = "const renderer = new THREE.WebGLRenderer();\n"
+renderer_code += "renderer.setSize(window.innerWidth, window.innerHeight);\n"
+renderer_code += "document.body.appendChild(renderer.domElement);\n"
+
+# Background color
+background_color = bpy.context.scene.world.color
+renderer_code += f"// Background Color\n"
+renderer_code += f"scene.background = new Three.Color({bpy_color_to_hex(background_color)});\n"

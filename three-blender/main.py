@@ -69,11 +69,14 @@ for light in bpy.data.lights:
 # OBJECTS
 obj_code = "// OBJECTS\n"
 
+def fix_filepath(filepath):
+    return filepath.replace("\\", "/")
+
 def loader(filepath, object):
     location = bpy.data.objects[object.name].location
     rotation = bpy.data.objects[object.name].rotation_euler
 
-    load_code = f"loader.load('{filepath}',\n"
+    load_code = f"loader.load('{fix_filepath(filepath)}',\n"
     load_code += "\t(gltf) => {\n"
     load_code += f"\t\tconst {object.name} = gltf.scene;\n"
     load_code += f"\t\t{object.name}.position.set({location.x}, {location.y}, {location.z});\n"

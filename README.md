@@ -16,7 +16,7 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
 5. Voila! Your 3d scene will now be rendered in the browser.
 
-TODO:
+## TODO:
 - [ ] Fix the coordination system, rotation and position of meshes
 - [ ] Add support for HDRi (by converting it to cubemaps)
 - [ ] Support for more lights (Area light and Sun)

@@ -1,6 +1,7 @@
 import bpy
 from mathutils import Vector
 from os import makedirs, path
+from math import pi
 
 blend_dir = bpy.path.abspath("//")
 export_dir = path.join(blend_dir, "exported_gltfs")
@@ -14,12 +15,18 @@ def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)
     return '0x{:02x}{:02x}{:02x}'.format(*rgb)
 
+def posfix(x,y,z):
+    return [x, z, -y]
+
+def rotfix(x,y,z):
+    return [x-pi/2,y,z]
+
 # Generate position and rotation properties for objects
 def addobjprop(object):
     location = object.location
     rotation = object.rotation_euler
-    code = f"{object.name}.position.set({location.x}, {location.y}, {location.z});\n"
-    code += f"{object.name}.rotation.set({rotation.x}, {rotation.y}, {rotation.z});\n"
+    code = f"{object.name}.position.set({location.x}, {location.z}, {-location.y});\n"
+    code += f"{object.name}.rotation.set({rotation.x - pi/2}, {rotation.y}, {rotation.z});\n"
     return code
 
 # CAMERAS
@@ -38,7 +45,7 @@ for light in bpy.data.lights:
     if light.type == "POINT":
         light_code += f"const {light.name} = new THREE.PointLight({bpy_color_to_hex(light.color)});\n"
         location = bpy.data.objects[light.name].location
-        light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"
+        light_code += f"{light.name}.position.set({location.x}, {location.z}, {-location.y});\n"
 
     # SPOT LIGHT
     elif light.type == "SPOT":
@@ -48,7 +55,7 @@ for light in bpy.data.lights:
         light_code += f"{light.name}.castShadow = true; // enable shadow\n"
         
         location = light_object.location
-        light_code += f"{light.name}.position.set({location.x}, {location.y}, {location.z});\n"
+        light_code += f"{light.name}.position.set({location.x}, {location.z}, {-location.y});\n"
         
         # Determining target location based on constraints
         if light_object.constraints:
@@ -82,8 +89,8 @@ def loader(filepath, object):
     load_code = f"loader.load('exported_gltfs/{object.name}.glb',\n"
     load_code += "\t(gltf) => {\n"
     load_code += f"\t\tconst {object.name} = gltf.scene;\n"
-    load_code += f"\t\t{object.name}.position.set({location.x}, {location.y}, {location.z});\n"
-    load_code += f"\t\t{object.name}.rotation.set({rotation.x}, {rotation.y}, {rotation.z});\n"
+    load_code += f"\t\t{object.name}.position.set({location.x}, {location.z}, {-location.y});\n"
+    load_code += f"\t\t{object.name}.rotation.set({rotation.x-pi/2}, {rotation.y}, {rotation.z});\n"
     load_code += f"\t\tscene.add({object.name});\n"
     load_code += "\t},\n"
     load_code += "\t(xhr) => {\n"

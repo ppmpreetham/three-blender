@@ -1,5 +1,5 @@
 # three-blender
-Blender addon that converts your scenes to Three.js code.
+Zero lines of code! Now convert your Blender scenes automatically into ThreeJS websites! 
 
 Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
@@ -8,18 +8,19 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 ```html
 <script type="module" src="three.js"></script>
 ```
-2. Paste this script in blender and hit run
+2. Paste this script in blender's `Scripting` and hit run
 
 3. The files (including the 3d models) would be saved in the same folder as the blend file.
 
 4. Paste these files in your html folder and run the html file.
 
-5. Voila! Your 3d scene is now rendered in the browser.
+5. Voila! Your 3d scene will now be rendered in the browser.
 
 ## Limitations
-- - The script currently doesn't support all materials and textures.
 
-- The script might not work for all kinds of 3d models.
+- The coordinate system is broken due to differences between ThreeJS and Blender.
+
+- Keyframes are not supported currently.
 
 - The script only works for blender 4.0 and above.
 
@@ -36,6 +37,4 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
 6. Create a pull request.
 
-7. Star the repository.
-
-8. Make sure to follow the code of conduct.
+7. Make sure to follow the code of conduct.

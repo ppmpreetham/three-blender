@@ -22,8 +22,9 @@ def addobjprop(object):
     """Generiert Position und Rotation für ein Objekt."""
     location = object.location
     rotation = object.rotation_euler
+    # Konvertiere die Positionen und Rotationen von Blender zu Three.js
     code = f"{safe_js_name(object.name)}.position.set({location.x}, {location.z}, {-location.y});\n"
-    code += f"{safe_js_name(object.name)}.rotation.set({rotation.x - pi/2}, {rotation.y}, {rotation.z});\n"
+    code += f"{safe_js_name(object.name)}.rotation.set({rotation.x}, {rotation.z}, {-rotation.y});\n"
     return code
 
 def export_obj(obj):

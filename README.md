@@ -3,7 +3,6 @@ Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into 
 
 Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
-Preview
 https://github.com/user-attachments/assets/29a39b08-c466-4277-9f95-1c2174b6ae69
 
 

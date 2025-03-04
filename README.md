@@ -5,8 +5,7 @@ Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into 
 
 Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
-https://github.com/user-attachments/assets/29a39b08-c466-4277-9f95-1c2174b6ae69
-
+<video controls src="three-blender/v0.1.mp4" title="Three Blender Usage"></video>
 
 ## Installation
 

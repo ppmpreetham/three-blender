@@ -70,7 +70,7 @@ for light in bpy.data.lights:
                 # Calculate the target position if no constraint
                 target_location = location + light_object.rotation_euler.to_matrix() @ Vector((0, 0, -1))
             
-            light_code += f"{safe_name(light.name)}.target.position.set({target_location.x}, {target_location.y}, {target_location.z});\n"
+            light_code += f"{safe_name(light.name)}.target.position.set({safe_transform(target_location)});\n"
 
         # AREA LIGHT
         elif light.type == "AREA":

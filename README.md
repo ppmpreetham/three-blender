@@ -1,5 +1,5 @@
-# three-blender
-![alt text](three-blender/three-blender.png)
+# Three Blender
+![alt text](three-blender/readme.jpg)
 
 Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into ThreeJS websites! 
 
@@ -8,34 +8,29 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 https://github.com/user-attachments/assets/29a39b08-c466-4277-9f95-1c2174b6ae69
 
 
-## Usage
-1. In your default html file, put this code snippet 
-```html
-<script type="module" src="three.js"></script>
-```
-2. Paste this script in blender's `Scripting` and hit run
+## Installation
 
-3. The files (including the 3d models) would be saved in the same folder as the blend file.
+- Download the `three_blender_v0.1.py` file from the releases section
+- Open Blender and navigate to `Edit > Preferences > Add-ons > Install`
+- Select the downloaded zip file
+- Enable the addon by checking the box next to `Import-Export: Three.js Scene Exporter`
 
-4. Paste these files in your html folder and run the html file.
+##  Usage Instructions
 
-5. Voila! Your 3d scene will now be rendered in the browser.
+- Create and set up your scene in Blender
+- Navigate to Output Properties panel
+- Find the `Three.js Export` section
+- Enter a path where your HTML file should be saved
+- Click `Export Scene` button
+- Get the generated HTML file!
 
-## TODO:
+## What's Next?
 - [ ] Add support for HDRi (by converting it to cubemaps)
 - [ ] Support for more lights (Area light and Sun)
 - [ ] Support for keyframes
 - [ ] Apply modifier before exporting the model.
 - [ ] Draco GLB compression
 - [ ] Support for Volumetrics
-
-## Limitations
-
-- The coordinate system is broken due to differences between ThreeJS and Blender.
-
-- Keyframes are not supported currently.
-
-- The script only works for blender 4.0 and above.
 
 ## Contributing
 1. Fork the repository.

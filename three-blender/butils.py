@@ -1,4 +1,3 @@
-
 def safe_name(name: str):
     ACCENT_MAP = {
         "á": "a", "à": "a", "ã": "a", "â": "a", "ä": "ae", "å": "a",

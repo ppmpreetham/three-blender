@@ -26,8 +26,8 @@ def bpy_color_to_hex(bpy_color):
 def addobjprop(object):
     location = object.location
     rotation = object.rotation_euler
-    code = f"{safe_name(object.name)}.position.set({location.x}, {location.z}, {-location.y});\n"
-    code += f"{safe_name(object.name)}.rotation.set({rotation.x}, {rotation.z}, {-rotation.y});\n"
+    code = f"{safe_name(object.name)}.position.set({safe_transform(location)});\n"
+    code += f"{safe_name(object.name)}.rotation.set({safe_transform(rotation)});\n"
     return code
 
 # CAMERAS
@@ -48,7 +48,7 @@ for light in bpy.data.lights:
         if light.type == "POINT":
             light_code += f"const {safe_name(light.name)} = new THREE.PointLight({bpy_color_to_hex(light.color)});\n"
             location = bpy.data.objects[safe_name(light.name)].location
-            light_code += f"{safe_name(light.name)}.position.set({location.x}, {location.y}, {location.z});\n"
+            light_code += f"{safe_name(light.name)}.position.set({safe_transform(location)});\n"
 
         # SPOT LIGHT
         elif light.type == "SPOT":

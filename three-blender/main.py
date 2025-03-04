@@ -144,6 +144,12 @@ renderer_code += f"\t{safe_name(bpy.data.cameras[0].name)}.updateProjectionMatri
 renderer_code += "\trenderer.setSize(window.innerWidth, window.innerHeight);"
 renderer_code += "});\n"
 
+#Orbit Controls
+renderer_code += "\n// OrbitControls\n";
+renderer_code += "const controls = new OrbitControls(" + safe_name(bpy.data.cameras[0].name) + ", renderer.domElement);\n";
+renderer_code += "controls.enableDamping = true;\n";
+renderer_code += "controls.dampingFactor = 0.05;\n";
+
 # Animation loop
 renderer_code += "\nfunction animate() {\n"
 renderer_code += "\trequestAnimationFrame(animate);\n"

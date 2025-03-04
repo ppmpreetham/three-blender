@@ -1,4 +1,6 @@
 # three-blender
+![alt text](three-blender/three-blender.png)
+
 Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into ThreeJS websites! 
 
 Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
@@ -20,12 +22,11 @@ https://github.com/user-attachments/assets/29a39b08-c466-4277-9f95-1c2174b6ae69
 5. Voila! Your 3d scene will now be rendered in the browser.
 
 ## TODO:
-- [ ] Fix the coordination system, rotation and position of meshes
 - [ ] Add support for HDRi (by converting it to cubemaps)
 - [ ] Support for more lights (Area light and Sun)
 - [ ] Support for keyframes
 - [ ] Apply modifier before exporting the model.
-- [ ] Draco GLB compression selection by user
+- [ ] Draco GLB compression
 - [ ] Support for Volumetrics
 
 ## Limitations

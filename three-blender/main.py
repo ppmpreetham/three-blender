@@ -9,9 +9,13 @@ imports = 'import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/t
 imports += 'import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";\n'
 imports += 'import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";\n'
 
-# Safe importin files
+# Safe importing files
 def safe_name(name: str):
-    return name.replace(".", "_")
+    return name.replace(" ", "_").replace("-", "_").replace(".", "_").replace("ü", "ue").replace("ö", "oe").replace("ä", "ae").replace("ß", "ss")
+
+# Safe Tramsforms
+def safe_transform(transform):
+    return f"{transform.x}, {transform.z}, {-transform.y}"
 
 # Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):

@@ -22,8 +22,8 @@ def bpy_color_to_hex(bpy_color):
 def addobjprop(object):
     location = object.location
     rotation = object.rotation_euler
-    code = f"{object.name}.position.set({location.x}, {location.y}, {location.z});\n"
-    code += f"{object.name}.rotation.set({rotation.x}, {rotation.y}, {rotation.z});\n"
+    code = f"{safe_name(object.name)}.position.set({location.x}, {location.z}, {-location.y});\n"
+    code += f"{safe_name(object.name)}.rotation.set({rotation.x}, {rotation.z}, {-rotation.y});\n"
     return code
 
 # CAMERAS

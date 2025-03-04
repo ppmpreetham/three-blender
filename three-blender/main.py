@@ -9,6 +9,10 @@ imports = 'import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/t
 imports += 'import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";\n'
 imports += 'import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";\n'
 
+# Safe importin files
+def safe_name(name: str):
+    return name.replace(".", "_")
+
 # Convert Blender color to HEX (Three.js format)
 def bpy_color_to_hex(bpy_color):
     rgb = tuple(int(channel * 255) for channel in bpy_color)

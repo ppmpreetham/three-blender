@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/29a39b08-c466-4277-9f95-1c2174b6ae69
 
 ## Installation
 
-- Download the `three_blender_v0.1.py` file from the releases section
+- Download the [`three_blender_v0.1.py`](https://github.com/ppmpreetham/three-blender/releases/download/v0.1/three_blender_v0.1.py) file from the [releases](https://github.com/ppmpreetham/three-blender/releases) section
 - Open Blender and navigate to `Edit > Preferences > Add-ons > Install`
 - Select the downloaded zip file
 - Enable the addon by checking the box next to `Import-Export: Three.js Scene Exporter`

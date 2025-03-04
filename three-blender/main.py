@@ -34,7 +34,7 @@ def addobjprop(object):
 cam_code = "// CAMERAS\n"
 for camera in bpy.data.cameras:
     cam_code += f"// {safe_name(camera.name)}\n\n"
-    cam_code += f"const {safe_name(camera.name)} = new THREE.PerspectiveCamera({bpy.context.object.data.lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
+    cam_code += f"const {safe_name(camera.name)} = new THREE.PerspectiveCamera({bpy.data.cameras[0].lens}, window.innerWidth / window.innerHeight, 0.1, 1000);\n"
     cam_code += addobjprop(bpy.data.objects[safe_name(camera.name)])
     cam_code += f"console.log('Camera {safe_name(camera.name)} position:', {safe_name(camera.name)}.position);\n"
     cam_code += f"scene.add({safe_name(camera.name)});\n"

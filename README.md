@@ -9,7 +9,7 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
 ## Installation
 
-- Download the [`three_blender_v0.1.py`](https://github.com/ppmpreetham/three-blender/releases/download/v0.1/three_blender_v0.1.py) file from the [releases](https://github.com/ppmpreetham/three-blender/releases) section
+- Download the [`three_blender_v0.1.py`](https://github.com/ppmpreetham/three-blender/releases/download/v0.1/three_blender_v01.py) file from the [releases](https://github.com/ppmpreetham/three-blender/releases) section
 - Open Blender and navigate to `Edit > Preferences > Add-ons > Install`
 - Select the downloaded zip file
 - Enable the addon by checking the box next to `Import-Export: Three.js Scene Exporter`
@@ -33,15 +33,9 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
 ## Contributing
 1. Fork the repository.
-
 2. Clone the repository.
-
 3. Create a new branch.
-
 4. Make changes and commit them.
-
 5. Push the changes to your fork.
-
 6. Create a pull request.
-
 7. Make sure to follow the code of conduct.

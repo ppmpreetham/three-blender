@@ -1,5 +1,13 @@
-# Three Blender
+[![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/license/mit)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/releases)
+[![GitHub stars](https://img.shields.io/github/stars/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/network/members)
+[![GitHub contributors](https://img.shields.io/github/contributors/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/graphs/contributors)
+[![Follow @ppmpreetham](https://img.shields.io/twitter/follow/ppmpreetham?style=social)](https://x.com/ppmpreetham)
+
+
 ![alt text](three-blender/readme.jpg)
+# Three Blender
 
 Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into ThreeJS websites! 
 
@@ -15,7 +23,7 @@ https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 - Select the downloaded zip file
 - Enable the addon by checking the box next to `Import-Export: Three.js Scene Exporter`
 
-##  Usage Instructions
+##  Usage
 
 - Create and set up your scene in Blender
 - Navigate to Output Properties panel
@@ -25,6 +33,7 @@ https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 - Get the generated HTML file!
 
 ## What's Next?
+- [ ] Respecting the Instances
 - [ ] Add support for HDRi (by converting it to cubemaps)
 - [ ] Support for more lights (Area light and Sun)
 - [ ] Support for keyframes

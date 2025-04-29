@@ -16,6 +16,8 @@ Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 ## Demo
 https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 
+![Alt](https://repobeats.axiom.co/api/embed/b75f6e3d26c1c18ed90dca4379748c066dfc0907.svg "Repobeats analytics image")
+
 ## Installation
 
 - Download the [`three_blender_v0.1.py`](https://github.com/ppmpreetham/three-blender/releases/download/v0.1/three_blender_v01.py) file from the [releases](https://github.com/ppmpreetham/three-blender/releases) section
@@ -40,8 +42,6 @@ https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 - [ ] Apply modifier before exporting the model.
 - [ ] Draco GLB compression
 - [ ] Support for Volumetrics
-
-![Alt](https://repobeats.axiom.co/api/embed/b75f6e3d26c1c18ed90dca4379748c066dfc0907.svg "Repobeats analytics image")
 
 ## Contributing
 1. Fork the repository.

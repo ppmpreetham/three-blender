@@ -41,6 +41,8 @@ https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 - [ ] Draco GLB compression
 - [ ] Support for Volumetrics
 
+![Alt](https://repobeats.axiom.co/api/embed/b75f6e3d26c1c18ed90dca4379748c066dfc0907.svg "Repobeats analytics image")
+
 ## Contributing
 1. Fork the repository.
 2. Clone the repository.

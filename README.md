@@ -48,6 +48,7 @@ Requires Blender 4.2+.
 | Procedural shader nodes                                          | Baked into embedded PBR textures (Cycles bake, auto UV if needed)           |
 | Shape keys                                                       | glTF morph targets; drive via `model.userData.shapeKeys["Name"](0..1)`      |
 | Keyframe animations                                              | Baked GLB clips playing through `AnimationMixer`                            |
+| Animated cameras / lamps                                         | Transform tracks baked per frame into `AnimationClip`s                      |
 | Compositor Glare + camera DOF (with Post-Processing toggled on)  | `pmndrs/postprocessing` composer: SMAA, `BloomEffect`, `DepthOfFieldEffect`, tone mapping |
 
 ## What's Next?

@@ -1,5 +1,6 @@
 import bpy
 
+from .animation import TransformAnimator
 from .cameras import CameraExporter
 from .context import ExportPaths, ExportState, THREE_VERSION
 from .lights import LightExporter
@@ -32,12 +33,15 @@ class SceneExporter:
         world_section = WorldExporter(self._state).generate()
         lights_section = LightExporter(self._state).generate()
         objects_section = ObjectExporter(self._state).generate()
+        animator = TransformAnimator(self._state)
+        animation_section = animator.generate()
         postfx = PostFXExporter(self._state, cameras.active_object, self._scene)
         return {
             "cameras": camera_section,
             "world": world_section,
             "lights": lights_section,
             "objects": objects_section,
+            "animations": animation_section,
             "postfx": postfx.generate(),
             "_active_camera": cameras.active,
         }

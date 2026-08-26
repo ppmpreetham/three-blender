@@ -8,7 +8,6 @@ MODEL_RUNTIME = """// Model runtime: every unique Blender mesh is downloaded onc
 // and keyframed animations baked into the GLB start playing automatically.
 const modelCache = new Map();
 const placedModels = new Set();
-const mixers = [];
 
 function loadModel(url) {
   if (!modelCache.has(url)) {

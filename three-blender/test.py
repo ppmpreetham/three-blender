@@ -112,6 +112,9 @@ def build_scene():
     cam_obj.rotation_euler = (1.109, 0.0, 0.815)
     scene.collection.objects.link(cam_obj)
     scene.camera = cam_obj
+    cam_obj.keyframe_insert(data_path="location", frame=1)
+    cam_obj.location.x += 2.0
+    cam_obj.keyframe_insert(data_path="location", frame=60)
 
     ortho_data = bpy.data.cameras.new("Top Ortho")
     ortho_data.type = "ORTHO"
@@ -206,9 +209,13 @@ def check(js_source, models, output_dir, html_source):
     assert "placeModel('Cube_A'" in js_source and "placeModel('Cube_B'" in js_source
     assert "'models/suzanne.glb', [3" in js_source, "linked duplicate must reuse the first GLB"
     assert "mixers.forEach" in js_source
+    assert "AnimationClip('Main_Cam Action'" in js_source, "camera keyframes missing"
+    assert "QuaternionKeyframeTrack('.quaternion'" in js_source
+    assert "new THREE.AnimationMixer(Main_Cam);" in js_source
+    assert js_source.count("mixers.push(mixer);") >= 2, "camera mixer not registered"
     assert "activeCamera = Main_Cam;" in js_source
     camera_line = next(l for l in js_source.splitlines() if l.startswith("Main_Cam.position.set"))
-    assert "7.36" in camera_line, f"camera position stale: {camera_line}"
+    assert "9.36" in camera_line, f"camera position stale: {camera_line}"
     sun_target = next(l for l in js_source.splitlines() if "Sun_Lamp.target.position.set" in l)
     assert "-0.000000" not in sun_target and sun_target != SUN_IDENTITY_TARGET
     assert "postprocessing" not in js_source and "EffectComposer" not in js_source

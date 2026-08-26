@@ -60,16 +60,26 @@ class RuntimeGenerator:
             self._renderer(),
             self._loader(),
             "const scene = new THREE.Scene();",
+            self._mixers(),
             sections["world"],
             sections["cameras"] or self._fallback_camera(),
             sections["lights"],
             sections["objects"],
+            sections["animations"],
             sections["postfx"],
             self._controls(),
             self._resize(),
             self._animate(),
         ]
         return "\n\n".join(part.strip() for part in parts if part)
+
+    def _mixers(self) -> str:
+        if not (self._state.has_meshes or self._state.has_object_animations):
+            return ""
+        return (
+            "// Every animated thing plays through these mixers, updated once per frame\n"
+            "const mixers = [];"
+        )
 
     def _imports(self) -> str:
         lines = [
@@ -205,8 +215,8 @@ class RuntimeGenerator:
         )
 
     def _animate(self) -> str:
-        needs_clock = self._state.has_meshes or self._state.post_processing
-        mixer_update = "  mixers.forEach((mixer) => mixer.update(delta));\n" if self._state.has_meshes else ""
+        needs_clock = self._state.has_meshes or self._state.has_object_animations
+        mixer_update = "  mixers.forEach((mixer) => mixer.update(delta));\n" if needs_clock else ""
         clock_line = "const clock = new THREE.Clock();\n" if needs_clock else ""
         delta_line = "  const delta = clock.getDelta();\n" if needs_clock else ""
         render_call = (

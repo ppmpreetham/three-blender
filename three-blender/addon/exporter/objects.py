@@ -1,6 +1,7 @@
 import bpy
 
 from .coords import position, quaternion
+from .materials import MaterialBaker
 
 MODEL_RUNTIME = """// Model runtime: every unique Blender mesh is downloaded once.
 // Linked duplicates of the same mesh become clones that share GPU buffers,
@@ -36,10 +37,29 @@ async function placeModel(name, url, position, rotation) {
       gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
       mixers.push(mixer);
     }
+    bindShapeKeys(model);
     scene.add(model);
   } catch (error) {
     console.error(`Failed to place model "${name}"`, error);
   }
+}
+
+// Shape keys from Blender arrive as morph targets; drive them per model via
+// model.userData.shapeKeys["KeyName"](0..1)
+function bindShapeKeys(model) {
+  const shapeKeys = {};
+  model.traverse((node) => {
+    if (!node.isMesh || !node.morphTargetDictionary) {
+      return;
+    }
+    Object.keys(node.morphTargetDictionary).forEach((key) => {
+      shapeKeys[key] = (value) => {
+        const index = node.morphTargetDictionary[key];
+        node.morphTargetInfluences[index] = value;
+      };
+    });
+  });
+  model.userData.shapeKeys = shapeKeys;
 }
 """
 
@@ -48,6 +68,7 @@ class ObjectExporter:
     def __init__(self, state):
         self._state = state
         self._url_by_mesh_data = {}
+        self._baker = MaterialBaker()
 
     def generate(self) -> str:
         meshes = [
@@ -79,12 +100,17 @@ class ObjectExporter:
         bpy.ops.object.select_all(action="DESELECT")
         obj.select_set(True)
         bpy.context.view_layer.objects.active = obj
-        bpy.ops.export_scene.gltf(
-            filepath=str(destination),
-            use_selection=True,
-            export_format="GLB",
-            export_draco_mesh_compression_enable=self._state.use_draco,
-        )
+        swaps = self._baker.prepare(obj)
+        try:
+            bpy.ops.export_scene.gltf(
+                filepath=str(destination),
+                use_selection=True,
+                export_format="GLB",
+                export_draco_mesh_compression_enable=self._state.use_draco,
+                export_morph=True,
+            )
+        finally:
+            self._baker.restore(swaps)
         return f"models/{file_name}"
 
     def _place_call(self, obj, url: str) -> str:

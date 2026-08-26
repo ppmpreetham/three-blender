@@ -45,6 +45,8 @@ Requires Blender 4.2+.
 | World mist                                                       | `THREE.Fog`                                                                 |
 | AgX / Filmic / Standard view transform                           | Matching tone mapping + exposure                                            |
 | Meshes                                                           | Draco-compressed GLBs; linked duplicates share one download and GPU buffers |
+| Procedural shader nodes                                          | Baked into embedded PBR textures (Cycles bake, auto UV if needed)           |
+| Shape keys                                                       | glTF morph targets; drive via `model.userData.shapeKeys["Name"](0..1)`      |
 | Keyframe animations                                              | Baked GLB clips playing through `AnimationMixer`                            |
 | Compositor Glare + camera DOF (with Post-Processing toggled on)  | `pmndrs/postprocessing` composer: SMAA, `BloomEffect`, `DepthOfFieldEffect`, tone mapping |
 

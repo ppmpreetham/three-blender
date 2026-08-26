@@ -1,49 +1,72 @@
 [![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/license/mit)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/releases)
+[![GitHub release (latest by date)](https://github.com/ppmpreetham/three-blender/releases)]
 [![GitHub stars](https://img.shields.io/github/stars/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/network/members)
-[![GitHub contributors](https://img.shields.io/github/contributors/ppmpreetham/three-blender)](https://github.com/ppmpreetham/three-blender/graphs/contributors)
-[![Follow @ppmpreetham](https://img.shields.io/twitter/follow/ppmpreetham?style=social)](https://x.com/ppmpreetham)
+[![GitHub contributors](https://github.com/ppmpreetham/three-blender/graphs/contributors)]
 
-
-![alt text](three-blender/readme.jpg)
 # Three Blender
 
-Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into ThreeJS websites! 
+Write Zero lines of ThreeJS! Now compile your Blender scenes automatically into ThreeJS websites!
 
 Built with 💖 by [Preetham Pemmasani](https://github.com/ppmpreetham)
 
 ## Demo
-https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 
-![Alt](https://repobeats.axiom.co/api/embed/b75f6e3d26c1c18ed90dca4379748c066dfc0907.svg "Repobeats analytics image")
+https://github.com/user-attachments/assets/5faaedb7-3adb-446c-af87-2b33b144c3e3
 
 ## Installation
 
-- Download the [`three_blender_v0.1.py`](https://github.com/ppmpreetham/three-blender/releases/download/v0.1/three_blender_v01.py) file from the [releases](https://github.com/ppmpreetham/three-blender/releases) section
+- Zip the [`io_three_blender`](./three-blender/io_three_blender) folder (or grab it from the [releases](https://github.com/ppmpreetham/three-blender/releases))
 - Open Blender and navigate to `Edit > Preferences > Add-ons > Install`
-- Select the downloaded zip file
-- Enable the addon by checking the box next to `Import-Export: Three.js Scene Exporter`
+- Select the zip file
+- Enable the addon by checking the box next to `Import-Export: Three-Blender`
 
-##  Usage
+Requires Blender 4.2+.
+
+## Usage
 
 - Create and set up your scene in Blender
 - Navigate to Output Properties panel
 - Find the `Three.js Export` section
 - Enter a path where your HTML file should be saved
-- Click `Export Scene` button
-- Get the generated HTML file!
+- Click `Export Scene`
+- Serve the output folder with any static server and open it in a browser
+
+## What Gets Exported
+
+| Blender                                                          | Three.js                                                                    |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Perspective / ortho cameras (focal length, clipping, lens shift) | `PerspectiveCamera` / `OrthographicCamera`                                  |
+| Sun lamp                                                         | `DirectionalLight` with shadow frustum                                      |
+| Point lamp                                                       | `PointLight` with range, decay and soft shadows                             |
+| Spot lamp (incl. Track-To constraints)                           | `SpotLight` with cone angle and penumbra                                    |
+| Area lamp                                                        | `RectAreaLight`                                                             |
+| HDRI world                                                       | Equirect background + image-based lighting (`RGBELoader`)                   |
+| World mist                                                       | `THREE.Fog`                                                                 |
+| AgX / Filmic / Standard view transform                           | Matching tone mapping + exposure                                            |
+| Meshes                                                           | Draco-compressed GLBs; linked duplicates share one download and GPU buffers |
+| Keyframe animations                                              | Baked GLB clips playing through `AnimationMixer`                            |
+| Compositor Glare + camera DOF (with Post-Processing toggled on)  | `pmndrs/postprocessing` composer: SMAA, `BloomEffect`, `DepthOfFieldEffect`, tone mapping |
 
 ## What's Next?
-- [ ] Respecting the Instances
-- [ ] Add support for HDRi (by converting it to cubemaps)
-- [ ] Support for more lights (Area light and Sun)
-- [ ] Support for keyframes
-- [ ] Apply modifier before exporting the model.
-- [ ] Draco GLB compression
+
 - [ ] Support for Volumetrics
+- [ ] Particle systems and hair
+- [ ] Procedural texture baking
+- [ ] More compositor effects in the post-processing chain (SSAO, motion blur)
+
+## Development
+
+Run the headless smoke test against a real `bpy` build:
+
+```sh
+uv venv .venv --python 3.11
+uv pip install --python .venv bpy
+.venv/python three-blender/test.py  # Windows: .venv\Scripts\python.exe
+```
 
 ## Contributing
+
 1. Fork the repository.
 2. Clone the repository.
 3. Create a new branch.

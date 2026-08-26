@@ -216,6 +216,10 @@ def check(js_source, models, output_dir, html_source):
     assert "powerPreference: 'high-performance'" in js_source
     assert "matrixAutoUpdate = false" in js_source
     assert "antialias: true" in js_source
+    assert "new THREE.Timer();" in js_source and "THREE.Clock" not in js_source
+    assert "PCFShadowMap;" in js_source and "PCFSoftShadowMap" not in js_source
+    assert "OrbitControls" not in js_source, "animated camera must not be hijacked by orbiting"
+    assert "controls.update" not in js_source
     assert "activeCamera = Main_Cam;" in js_source
     camera_line = next(l for l in js_source.splitlines() if l.startswith("Main_Cam.position.set"))
     assert "9.36" in camera_line, f"camera position stale: {camera_line}"
@@ -285,6 +289,12 @@ def check_roundtrip(models):
     assert "Wide" in key_names, f"morph target missing: {key_names}"
 
 
+def check_static_camera_controls(js_source):
+    assert "OrbitControls(activeCamera, renderer.domElement)" in js_source
+    assert "controls.enableDamping = true;" in js_source
+    assert "controls.update();" in js_source
+
+
 def check_postfx(js_source, html_source):
     assert "postprocessing@6.39.4/build/index.js" in html_source
     assert "} from 'postprocessing';" in js_source
@@ -322,6 +332,12 @@ def main():
     hdri_dir, hdri_js, _, _ = export(hdri_scene)
     check_hdri(hdri_dir, hdri_js)
     syntax_check(hdri_dir)
+
+    static_scene = build_scene()
+    static_scene.camera.animation_data_clear()
+    static_dir, static_js, _, _ = export(static_scene)
+    check_static_camera_controls(static_js)
+    syntax_check(static_dir)
     print(f"PASS - output in {output_dir}")
 
 

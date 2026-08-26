@@ -16,7 +16,7 @@ class TransformAnimator:
             return ""
         fps = max(scene.render.fps, 1)
         blocks = []
-        for obj in self._animated_objects():
+        for obj in self._bakeable_objects():
             js_name = self._state.sanitizer.sanitize(obj.name)
             block = self._block_for(obj, js_name, start, end, fps)
             if block:
@@ -27,34 +27,16 @@ class TransformAnimator:
         return "\n".join(blocks) + "\n"
 
     @staticmethod
-    def _animated_objects():
-        for obj in bpy.data.objects:
-            if obj.type not in {"CAMERA", "LIGHT"}:
-                continue
-            animation = obj.animation_data
-            if animation and (animation.action or animation.drivers):
-                yield obj
+    def _bakeable_objects():
+        return [obj for obj in bpy.data.objects if obj.type in {"CAMERA", "LIGHT"}]
 
     def _block_for(self, obj, js_name: str, start: int, end: int, fps: int) -> str:
-        times = []
-        positions = []
-        quaternions = []
-        original_frame = bpy.context.scene.frame_current
-        try:
-            for frame in range(start, end + 1):
-                bpy.context.scene.frame_set(frame)
-                bpy.context.view_layer.update()
-                matrix = obj.matrix_world
-                rotation = AXIS_CONVERSION @ matrix.to_3x3() @ AXIS_CONVERSION.inverted()
-                quaternion = rotation.to_quaternion()
-                translation = matrix.translation
-                times.append(f"{frame / fps:.5f}")
-                positions.append(f"{translation.x:.5f}, {translation.z:.5f}, {-translation.y:.5f}")
-                quaternions.append(
-                    f"{quaternion.x:.5f}, {quaternion.y:.5f}, {quaternion.z:.5f}, {quaternion.w:.5f}"
-                )
-        finally:
-            bpy.context.scene.frame_set(original_frame)
+        samples = self._sample(obj, start, end, fps)
+        if not self._has_motion(samples):
+            return ""
+        times = [f"{time:.5f}" for time, _, _ in samples]
+        positions = [f"{p[0]:.5f}, {p[1]:.5f}, {p[2]:.5f}" for _, p, _ in samples]
+        quaternions = [f"{q[0]:.5f}, {q[1]:.5f}, {q[2]:.5f}, {q[3]:.5f}" for _, _, q in samples]
         duration = times[-1]
         return (
             f"// {obj.name} motion baked from Blender keyframes, constraints and drivers included\n"
@@ -68,3 +50,39 @@ class TransformAnimator:
             "  mixers.push(mixer);\n"
             "}\n"
         )
+
+    @staticmethod
+    def _sample(obj, start: int, end: int, fps: int) -> list:
+        samples = []
+        original_frame = bpy.context.scene.frame_current
+        try:
+            for frame in range(start, end + 1):
+                bpy.context.scene.frame_set(frame)
+                bpy.context.view_layer.update()
+                matrix = obj.matrix_world
+                rotation = AXIS_CONVERSION @ matrix.to_3x3() @ AXIS_CONVERSION.inverted()
+                quaternion = rotation.to_quaternion()
+                translation = matrix.translation
+                samples.append(
+                    (
+                        frame / fps,
+                        (translation.x, translation.z, -translation.y),
+                        (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+                    )
+                )
+        finally:
+            bpy.context.scene.frame_set(original_frame)
+        return samples
+
+    @staticmethod
+    def _has_motion(samples: list) -> bool:
+        if len(samples) < 2:
+            return False
+        first_time, first_position, first_quaternion = samples[0]
+        for _, position, quaternion in samples[1:]:
+            moved = any(abs(a - b) > 1e-6 for a, b in zip(position, first_position))
+            dot = abs(sum(a * b for a, b in zip(quaternion, first_quaternion)))
+            rotated = dot < 1.0 - 1e-6
+            if moved or rotated:
+                return True
+        return False

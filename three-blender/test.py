@@ -1,4 +1,5 @@
 import shutil
+import re
 import subprocess
 import sys
 import tempfile
@@ -75,6 +76,9 @@ def build_scene():
     sun_obj = bpy.data.objects.new("Sun Lamp", light_data)
     sun_obj.rotation_euler = (0.9, 0.0, 0.7)
     scene.collection.objects.link(sun_obj)
+    sun_obj.keyframe_insert(data_path="location", frame=1)
+    sun_obj.location.z = 6.0
+    sun_obj.keyframe_insert(data_path="location", frame=60)
 
     point_data = bpy.data.lights.new("Bulb", type="POINT")
     point_data.energy = 500.0
@@ -115,6 +119,9 @@ def build_scene():
     cam_obj.keyframe_insert(data_path="location", frame=1)
     cam_obj.location.x += 2.0
     cam_obj.keyframe_insert(data_path="location", frame=60)
+    cam_obj.keyframe_insert(data_path="rotation_euler", frame=1)
+    cam_obj.rotation_euler.z += 0.35
+    cam_obj.keyframe_insert(data_path="rotation_euler", frame=60)
 
     ortho_data = bpy.data.cameras.new("Top Ortho")
     ortho_data.type = "ORTHO"
@@ -212,7 +219,11 @@ def check(js_source, models, output_dir, html_source):
     assert "AnimationClip('Main_Cam Action'" in js_source, "camera keyframes missing"
     assert "QuaternionKeyframeTrack('.quaternion'" in js_source
     assert "new THREE.AnimationMixer(Main_Cam);" in js_source
-    assert js_source.count("mixers.push(mixer);") >= 2, "camera mixer not registered"
+    assert "new THREE.AnimationMixer(Sun_Lamp);" in js_source, "animated lamp missing"
+    assert js_source.count("mixers.push(mixer);") >= 3, "not all baked mixers registered"
+    position_track = next(l for l in js_source.splitlines() if "VectorKeyframeTrack('.position'" in l)
+    values = re.findall(r"-?\d+\.\d+", position_track.split("], [", 1)[1])
+    assert len(values) > 6 and values[0] != values[3], "position track has no motion"
     assert "powerPreference: 'high-performance'" in js_source
     assert "matrixAutoUpdate = false" in js_source
     assert "antialias: true" in js_source
@@ -289,6 +300,11 @@ def check_roundtrip(models):
     assert "Wide" in key_names, f"morph target missing: {key_names}"
 
 
+def check_rigged_camera(js_source):
+    assert "AnimationMixer(Main_Cam" in js_source, "parent-rigged camera motion was not captured"
+    assert "OrbitControls" not in js_source
+
+
 def check_static_camera_controls(js_source):
     assert "OrbitControls(activeCamera, renderer.domElement)" in js_source
     assert "controls.enableDamping = true;" in js_source
@@ -338,6 +354,21 @@ def main():
     static_dir, static_js, _, _ = export(static_scene)
     check_static_camera_controls(static_js)
     syntax_check(static_dir)
+
+    rigged_scene = build_scene()
+    rigged_cam = rigged_scene.camera
+    rigged_cam.matrix_world = rigged_cam.matrix_world
+    rigged_cam.animation_data_clear()
+    rig = bpy.data.objects.new("Cam Rig", None)
+    rigged_scene.collection.objects.link(rig)
+    rig.location = (0.0, 0.0, 0.0)
+    rigged_cam.parent = rig
+    rig.keyframe_insert(data_path="location", frame=1)
+    rig.location.z = 3.0
+    rig.keyframe_insert(data_path="location", frame=60)
+    rigged_dir, rigged_js, _, _ = export(rigged_scene)
+    check_rigged_camera(rigged_js)
+    syntax_check(rigged_dir)
     print(f"PASS - output in {output_dir}")
 
 

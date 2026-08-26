@@ -23,9 +23,38 @@ def add_mesh(name, location):
     return obj
 
 
+def add_procedural_material(obj):
+    material = bpy.data.materials.new("Procedural Paint")
+    material.use_nodes = True
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+    nodes.clear()
+    principled = nodes.new("ShaderNodeBsdfPrincipled")
+    output = nodes.new("ShaderNodeOutputMaterial")
+    links.new(principled.outputs["BSDF"], output.inputs["Surface"])
+    noise = nodes.new("ShaderNodeTexNoise")
+    color_ramp = nodes.new("ShaderNodeValToRGB")
+    rough_ramp = nodes.new("ShaderNodeValToRGB")
+    links.new(noise.outputs["Fac"], color_ramp.inputs["Fac"])
+    links.new(color_ramp.outputs["Color"], principled.inputs["Base Color"])
+    links.new(noise.outputs["Fac"], rough_ramp.inputs["Fac"])
+    links.new(rough_ramp.outputs["Color"], principled.inputs["Roughness"])
+    obj.data.materials.append(material)
+
+
+def add_shape_key(obj, name, offset):
+    obj.shape_key_add(name="Basis")
+    key = obj.shape_key_add(name=name)
+    for vertex in key.data:
+        vertex.co.z += offset
+    return key
+
+
 def build_scene():
     scene = bpy.context.scene
     cube = add_mesh("Cube A", (0.0, 0.0, 0.0))
+    add_procedural_material(cube)
+    add_shape_key(cube, "Wide", 0.35)
 
     linked = add_mesh("Cube B", (3.0, 0.0, 0.0))
     linked.data = cube.data
@@ -226,6 +255,26 @@ def check_addon_lifecycle():
     print("addon register/unregister cycle OK")
 
 
+def check_roundtrip(models):
+    cube_glb = next(m for m in models if m.name == "suzanne.glb")
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=str(cube_glb))
+    imported = [o for o in bpy.data.objects if o not in before and o.type == "MESH"]
+    assert imported, "round-trip import produced no meshes"
+    has_image = any(
+        node.type == "TEX_IMAGE"
+        for obj in imported
+        for slot in obj.material_slots
+        if slot.material and slot.material.use_nodes
+        for node in slot.material.node_tree.nodes
+    )
+    assert has_image, "procedural material was not baked into an embedded texture"
+    with_keys = [obj for obj in imported if obj.data.shape_keys is not None]
+    assert with_keys, "shape keys did not survive export"
+    key_names = {key.name for key in with_keys[0].data.shape_keys.key_blocks}
+    assert "Wide" in key_names, f"morph target missing: {key_names}"
+
+
 def check_postfx(js_source, html_source):
     assert "postprocessing@6.39.4/build/index.js" in html_source
     assert "} from 'postprocessing';" in js_source
@@ -251,6 +300,7 @@ def main():
     print(f"output in {output_dir}")
     check(js_source, models, output_dir, html_source)
     syntax_check(output_dir)
+    check_roundtrip(models)
 
     postfx_scene = build_postfx_scene()
     postfx_dir, postfx_js, _, postfx_html = export(postfx_scene)

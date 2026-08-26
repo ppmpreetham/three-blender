@@ -1,2 +1,6 @@
 test/
 node_modules/
+others/
+__pycache__/
+.venv/
+*.zip

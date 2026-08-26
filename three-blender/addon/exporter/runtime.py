@@ -84,9 +84,10 @@ class RuntimeGenerator:
     def _imports(self) -> str:
         lines = [
             "import * as THREE from 'three';",
-            "import { OrbitControls } from 'three/addons/controls/OrbitControls.js';",
             "import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';",
         ]
+        if not self._state.active_camera_animated:
+            lines.insert(1, "import { OrbitControls } from 'three/addons/controls/OrbitControls.js';")
         if self._state.use_draco:
             lines.append("import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';")
         if self._state.env_texture_url and not self._state.env_is_exr:
@@ -144,7 +145,7 @@ class RuntimeGenerator:
                 [
                     "// Shadows enabled because the Blender scene uses shadow-casting lights",
                     "renderer.shadowMap.enabled = true;",
-                    "renderer.shadowMap.type = THREE.PCFSoftShadowMap;",
+                    "renderer.shadowMap.type = THREE.PCFShadowMap;",
                 ]
             )
         lines.append("document.body.appendChild(renderer.domElement);")
@@ -177,6 +178,10 @@ class RuntimeGenerator:
         )
 
     def _controls(self) -> str:
+        if self._state.active_camera_animated:
+            return (
+                "// The Blender camera directs the shot, so manual orbiting is disabled for it"
+            )
         return (
             "// Orbit to explore the exported scene, damped like the Blender viewport\n"
             "const controls = new OrbitControls(activeCamera, renderer.domElement);\n"
@@ -220,21 +225,22 @@ class RuntimeGenerator:
         )
 
     def _animate(self) -> str:
-        needs_clock = self._state.has_meshes or self._state.has_object_animations
-        mixer_update = "  mixers.forEach((mixer) => mixer.update(delta));\n" if needs_clock else ""
-        clock_line = "const clock = new THREE.Clock();\n" if needs_clock else ""
-        delta_line = "  const delta = clock.getDelta();\n" if needs_clock else ""
-        render_call = (
-            "composer.render(delta);" if self._state.post_processing else "renderer.render(scene, activeCamera);"
-        )
+        needs_timer = self._state.has_meshes or self._state.has_object_animations
+        mixer_update = "  mixers.forEach((mixer) => mixer.update(delta));\n" if needs_timer else ""
+        timer_line = "const timer = new THREE.Timer();\n" if needs_timer else ""
+        delta_line = "  timer.update();\n  const delta = timer.getDelta();\n" if needs_timer else ""
+        controls_update = "  controls.update();\n" if not self._state.active_camera_animated else ""
+        render_call = "renderer.render(scene, activeCamera);"
+        if self._state.post_processing:
+            render_call = "composer.render(delta);" if needs_timer else "composer.render();"
         return (
             "// Render loop: animations advance with real time, damping stays smooth\n"
-            f"{clock_line}"
+            f"{timer_line}"
             "function animate() {\n"
             "  requestAnimationFrame(animate);\n"
             f"{delta_line}"
             f"{mixer_update}"
-            "  controls.update();\n"
+            f"{controls_update}"
             f"  {render_call}\n"
             "}\n"
             "animate();"

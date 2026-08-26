@@ -48,3 +48,5 @@ class ExportState:
     fx_bloom: bool = False
     fx_dof: bool = False
     fx_tone_mapping: bool = False
+    has_object_animations: bool = False
+    active_camera_animated: bool = False

@@ -33,7 +33,7 @@ class SceneExporter:
         world_section = WorldExporter(self._state).generate()
         lights_section = LightExporter(self._state).generate()
         objects_section = ObjectExporter(self._state).generate()
-        animator = TransformAnimator(self._state)
+        animator = TransformAnimator(self._state, cameras.active_object)
         animation_section = animator.generate()
         postfx = PostFXExporter(self._state, cameras.active_object, self._scene)
         return {

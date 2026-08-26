@@ -4,8 +4,9 @@ from .coords import AXIS_CONVERSION
 
 
 class TransformAnimator:
-    def __init__(self, state):
+    def __init__(self, state, active_camera=None):
         self._state = state
+        self._active_camera = active_camera
 
     def generate(self) -> str:
         scene = bpy.context.scene
@@ -20,6 +21,8 @@ class TransformAnimator:
             block = self._block_for(obj, js_name, start, end, fps)
             if block:
                 self._state.has_object_animations = True
+                if obj is self._active_camera:
+                    self._state.active_camera_animated = True
                 blocks.append(block)
         return "\n".join(blocks) + "\n"
 

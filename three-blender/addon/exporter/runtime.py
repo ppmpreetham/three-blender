@@ -124,9 +124,14 @@ class RuntimeGenerator:
         if self._state.post_processing:
             tone_mapping = "THREE.NoToneMapping"
         exposure = 2.0 ** self._scene.view_settings.exposure
+        antialias = "false" if self._state.post_processing else "true"
         lines = [
             "// Renderer tuned to match Blender's color management (view transform and exposure)",
-            "const renderer = new THREE.WebGLRenderer({ antialias: true });",
+            "// Antialiasing is skipped when the post-processing chain supplies SMAA instead",
+            (
+                "const renderer = new THREE.WebGLRenderer({ "
+                f"antialias: {antialias}, powerPreference: 'high-performance', stencil: false }});"
+            ),
             "renderer.setSize(window.innerWidth, window.innerHeight);",
             "renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));",
             f"renderer.toneMapping = {tone_mapping};",

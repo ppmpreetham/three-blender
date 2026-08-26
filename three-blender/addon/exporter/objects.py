@@ -31,6 +31,9 @@ async function placeModel(name, url, position, rotation) {
         node.receiveShadow = true;
       }
     });
+    // Roots never move after placement; freezing their matrices keeps frame updates cheap
+    model.updateMatrix();
+    model.matrixAutoUpdate = false;
     if (isFirstInstance && gltf.animations.length > 0) {
       const mixer = new THREE.AnimationMixer(model);
       gltf.animations.forEach((clip) => mixer.clipAction(clip).play());

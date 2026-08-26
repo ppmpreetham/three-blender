@@ -213,6 +213,9 @@ def check(js_source, models, output_dir, html_source):
     assert "QuaternionKeyframeTrack('.quaternion'" in js_source
     assert "new THREE.AnimationMixer(Main_Cam);" in js_source
     assert js_source.count("mixers.push(mixer);") >= 2, "camera mixer not registered"
+    assert "powerPreference: 'high-performance'" in js_source
+    assert "matrixAutoUpdate = false" in js_source
+    assert "antialias: true" in js_source
     assert "activeCamera = Main_Cam;" in js_source
     camera_line = next(l for l in js_source.splitlines() if l.startswith("Main_Cam.position.set"))
     assert "9.36" in camera_line, f"camera position stale: {camera_line}"
@@ -293,6 +296,7 @@ def check_postfx(js_source, html_source):
     assert "DepthOfFieldEffect(Main_Cam," in js_source
     assert "ToneMappingMode.AGX" in js_source
     assert "renderer.toneMapping = THREE.NoToneMapping;" in js_source
+    assert "antialias: false" in js_source, "SMAA replaces MSAA when post-processing is on"
     assert "composer.addPass(new EffectPass(activeCamera, ...effects));" in js_source
     assert "composer.setSize(window.innerWidth, window.innerHeight);" in js_source
     assert "composer.render(delta);" in js_source
